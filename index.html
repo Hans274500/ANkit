@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>360° Feedback — PeopleIQ</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --night: #0f0f14;
+  --night2: #16161e;
+  --night3: #1e1e2a;
+  --night4: #252535;
+  --border: rgba(145, 74, 74, 0.07);
+  --border2: rgba(255,255,255,0.12);
+  --text: #f0eff8;
+  --text-mid: #a0a0c0;
+  --text-soft: #60607a;
+  --teal: #00d4b4;
+  --teal-dim: rgba(0,212,180,0.12);
+  --teal-glow: rgba(0,212,180,0.25);
+  --rose: #ff6b8a;
+  --rose-dim: rgba(255,107,138,0.12);
+  --gold: #f5c842;
+  --gold-dim: rgba(245,200,66,0.12);
+  --blue: #5b8def;
+  --blue-dim: rgba(91,141,239,0.12);
+  --purple: #a78bfa;
+  --purple-dim: rgba(167,139,250,0.12);
+  --ease: cubic-bezier(0.4,0,0.2,1);
+  --ease-spring: cubic-bezier(0.34,1.56,0.64,1);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Syne',sans-serif;background:var(--night);color:var(--text);min-height:100vh;overflow-x:hidden;}
+
+/* ── CURSOR ── */
+.cursor{width:8px;height:8px;background:var(--teal);border-radius:50%;position:fixed;pointer-events:none;z-index:9999;transition:transform .1s,opacity .2s;mix-blend-mode:screen;}
+.cursor-ring{width:32px;height:32px;border:1px solid rgba(0,212,180,0.4);border-radius:50%;position:fixed;pointer-events:none;z-index:9998;transition:transform .15s var(--ease),width .2s,height .2s;}
+
+/* ── HEADER ── */
+header{position:fixed;top:0;left:0;right:0;z-index:100;padding:18px 40px;display:flex;align-items:center;justify-content:space-between;background:rgba(15,15,20,0.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);}
+.logo{font-family:'Instrument Serif',serif;font-size:22px;color:var(--text);letter-spacing:-.3px;}
+.logo span{color:var(--teal);font-style:italic;}
+.nav{display:flex;align-items:center;gap:8px;}
+.nav-btn{padding:8px 18px;border-radius:8px;font-family:'Syne',sans-serif;font-size:13px;font-weight:500;cursor:pointer;border:none;transition:all .2s var(--ease);}
+.nav-btn.ghost{background:transparent;color:var(--text-mid);border:1px solid var(--border);}
+.nav-btn.ghost:hover{background:var(--night3);color:var(--text);border-color:var(--border2);}
+.nav-btn.solid{background:var(--teal);color:var(--night);font-weight:700;}
+.nav-btn.solid:hover{background:#00f0cc;transform:translateY(-1px);}
+
+/* ── HERO ── */
+.hero{min-height:100vh;display:flex;align-items:center;justify-content:center;position:relative;padding:120px 40px 80px;overflow:hidden;}
+.hero-bg{position:absolute;inset:0;pointer-events:none;}
+.orb{position:absolute;border-radius:50%;filter:blur(80px);opacity:.35;}
+.orb1{width:500px;height:500px;background:radial-gradient(circle,var(--teal),transparent);top:-100px;right:-100px;}
+.orb2{width:400px;height:400px;background:radial-gradient(circle,var(--purple),transparent);bottom:-80px;left:-80px;}
+.orb3{width:300px;height:300px;background:radial-gradient(circle,var(--rose),transparent);top:40%;left:30%;opacity:.2;}
+.grid-lines{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px);background-size:60px 60px;}
+.hero-content{position:relative;z-index:1;text-align:center;max-width:860px;}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:var(--teal-dim);border:1px solid rgba(0,212,180,0.25);border-radius:20px;padding:6px 16px;font-size:12px;font-weight:600;color:var(--teal);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:28px;animation:fadeDown .6s var(--ease) both;}
+.hero-badge .pulse{width:6px;height:6px;background:var(--teal);border-radius:50%;animation:pulse 1.8s infinite;}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(1.3)}}
+@keyframes fadeDown{from{opacity:0;transform:translateY(-12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes scaleIn{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:scale(1)}}
+.hero h1{font-family:'Instrument Serif',serif;font-size:clamp(48px,7vw,88px);line-height:1.05;font-weight:400;color:var(--text);margin-bottom:20px;animation:fadeUp .7s .1s var(--ease) both;}
+.hero h1 em{font-style:italic;color:var(--teal);}
+.hero p{font-size:17px;color:var(--text-mid);line-height:1.7;max-width:580px;margin:0 auto 40px;animation:fadeUp .7s .2s var(--ease) both;font-weight:400;}
+.hero-ctas{display:flex;align-items:center;justify-content:center;gap:14px;animation:fadeUp .7s .3s var(--ease) both;}
+.btn-lg{padding:14px 32px;border-radius:10px;font-family:'Syne',sans-serif;font-size:15px;font-weight:700;cursor:pointer;border:none;transition:all .25s var(--ease);}
+.btn-teal{background:var(--teal);color:var(--night);}
+.btn-teal:hover{background:#00f0cc;transform:translateY(-2px);box-shadow:0 12px 36px rgba(0,212,180,0.35);}
+.btn-ghost-lg{background:transparent;color:var(--text);border:1px solid var(--border2);}
+.btn-ghost-lg:hover{background:var(--night3);border-color:rgba(255,255,255,.2);}
+
+/* ── ORBIT DIAGRAM ── */
+.orbit-section{padding:80px 40px;display:flex;align-items:center;justify-content:center;position:relative;}
+.orbit-wrap{position:relative;width:440px;height:440px;flex-shrink:0;}
+.orbit-ring{position:absolute;border-radius:50%;border:1px dashed var(--border2);}
+.orbit-ring.r1{inset:80px;}
+.orbit-ring.r2{inset:30px;}
+.orbit-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:100px;height:100px;border-radius:50%;background:var(--night3);border:2px solid var(--teal);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:5;box-shadow:0 0 40px var(--teal-glow);}
+.orbit-center .name{font-family:'Instrument Serif',serif;font-size:13px;color:var(--text);}
+.orbit-center .sub{font-size:9px;color:var(--text-soft);letter-spacing:1px;text-transform:uppercase;margin-top:2px;}
+.orbit-node{position:absolute;width:72px;height:72px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:all .3s var(--ease-spring);border:1.5px solid;}
+.orbit-node:hover{transform:scale(1.15);}
+.orbit-node .n-icon{font-size:18px;margin-bottom:3px;}
+.orbit-node .n-label{font-size:9px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;text-align:center;}
+.orbit-node.self{background:rgba(0,212,180,.1);border-color:var(--teal);top:50%;left:50%;transform:translate(-50%,-180px);}
+.orbit-node.self:hover{transform:translate(-50%,-180px) scale(1.15);}
+.orbit-node.self .n-label{color:var(--teal);}
+.orbit-node.manager{background:rgba(245,200,66,.1);border-color:var(--gold);right:0;top:50%;transform:translateY(-50%) translateX(50%);}
+.orbit-node.manager:hover{transform:translateY(-50%) translateX(50%) scale(1.15);}
+.orbit-node.manager .n-label{color:var(--gold);}
+.orbit-node.peer{background:rgba(91,141,239,.1);border-color:var(--blue);bottom:0;left:50%;transform:translate(-50%,50%);}
+.orbit-node.peer:hover{transform:translate(-50%,50%) scale(1.15);}
+.orbit-node.peer .n-label{color:var(--blue);}
+.orbit-node.report{background:rgba(255,107,138,.1);border-color:var(--rose);left:0;top:50%;transform:translateY(-50%) translateX(-50%);}
+.orbit-node.report:hover{transform:translateY(-50%) translateX(-50%) scale(1.15);}
+.orbit-node.report .n-label{color:var(--rose);}
+.orbit-arrow{position:absolute;top:50%;left:50%;width:130px;height:1px;background:linear-gradient(90deg,var(--teal),transparent);transform-origin:left center;opacity:.5;}
+.orbit-text{flex:1;padding-left:60px;max-width:500px;}
+.orbit-text h2{font-family:'Instrument Serif',serif;font-size:42px;color:var(--text);line-height:1.1;margin-bottom:16px;}
+.orbit-text h2 em{color:var(--teal);font-style:italic;}
+.orbit-text p{font-size:15px;color:var(--text-mid);line-height:1.7;margin-bottom:24px;font-weight:400;}
+.source-pills{display:flex;gap:10px;flex-wrap:wrap;}
+.source-pill{display:flex;align-items:center;gap:7px;padding:8px 14px;border-radius:8px;font-size:12px;font-weight:600;border:1px solid;}
+.source-pill.teal{background:var(--teal-dim);border-color:rgba(0,212,180,.25);color:var(--teal);}
+.source-pill.gold{background:var(--gold-dim);border-color:rgba(245,200,66,.25);color:var(--gold);}
+.source-pill.blue{background:var(--blue-dim);border-color:rgba(91,141,239,.25);color:var(--blue);}
+.source-pill.rose{background:var(--rose-dim);border-color:rgba(255,107,138,.25);color:var(--rose);}
+
+/* ── SECTION ── */
+section{padding:80px 40px;}
+.section-label{font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--teal);margin-bottom:12px;}
+.section-title{font-family:'Instrument Serif',serif;font-size:clamp(32px,4vw,52px);color:var(--text);line-height:1.1;margin-bottom:16px;}
+.section-title em{font-style:italic;color:var(--teal);}
+.section-sub{font-size:15px;color:var(--text-mid);line-height:1.7;max-width:560px;font-weight:400;}
+.centered{text-align:center;margin-bottom:60px;}
+.centered .section-sub{margin:0 auto;}
+
+/* ── FEEDBACK FORM ── */
+.form-section{background:var(--night2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+.form-wrap{max-width:860px;margin:0 auto;}
+.form-tabs{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:40px;}
+.form-tab{padding:14px 24px;font-size:13px;font-weight:600;color:var(--text-soft);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;letter-spacing:.3px;}
+.form-tab.active{color:var(--teal);border-bottom-color:var(--teal);}
+.form-tab:hover:not(.active){color:var(--text-mid);}
+.form-panel{display:none;animation:fadeUp .3s var(--ease);}
+.form-panel.active{display:block;}
+.reviewer-header{display:flex;align-items:center;gap:16px;background:var(--night3);border:1px solid var(--border);border-radius:12px;padding:18px 22px;margin-bottom:30px;}
+.rev-av{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;flex-shrink:0;font-family:'Instrument Serif',serif;}
+.rev-av.teal{background:var(--teal-dim);color:var(--teal);border:1.5px solid rgba(0,212,180,.3);}
+.rev-av.gold{background:var(--gold-dim);color:var(--gold);border:1.5px solid rgba(245,200,66,.3);}
+.rev-av.blue{background:var(--blue-dim);color:var(--blue);border:1.5px solid rgba(91,141,239,.3);}
+.rev-av.rose{background:var(--rose-dim);color:var(--rose);border:1.5px solid rgba(255,107,138,.3);}
+.rev-info .rev-name{font-size:15px;font-weight:700;color:var(--text);}
+.rev-info .rev-role{font-size:12px;color:var(--text-soft);margin-top:2px;}
+.anon-badge{margin-left:auto;display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text-soft);background:var(--night4);padding:5px 12px;border-radius:6px;border:1px solid var(--border);}
+.q-block{margin-bottom:32px;}
+.q-label{font-size:13px;font-weight:600;color:var(--text);margin-bottom:6px;line-height:1.4;}
+.q-sub{font-size:12px;color:var(--text-soft);margin-bottom:14px;}
+.rating-row{display:flex;align-items:center;gap:0;}
+.rating-btn{width:52px;height:52px;background:var(--night3);border:1px solid var(--border);color:var(--text-soft);font-size:13px;font-weight:700;cursor:pointer;transition:all .2s var(--ease);font-family:'Syne',sans-serif;}
+.rating-btn:first-child{border-radius:8px 0 0 8px;}
+.rating-btn:last-child{border-radius:0 8px 8px 0;}
+.rating-btn:hover,.rating-btn.sel{background:var(--teal);color:var(--night);border-color:var(--teal);}
+.rating-labels{display:flex;justify-content:space-between;padding:0 4px;margin-top:6px;}
+.rating-labels span{font-size:10px;color:var(--text-soft);}
+.slider-wrap{display:flex;align-items:center;gap:14px;}
+.slider{flex:1;-webkit-appearance:none;appearance:none;height:4px;border-radius:2px;background:var(--night4);outline:none;cursor:pointer;}
+.slider::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--teal);cursor:pointer;border:2px solid var(--night);box-shadow:0 0 10px var(--teal-glow);}
+.slider-val{font-size:14px;font-weight:700;color:var(--teal);min-width:32px;text-align:right;}
+textarea.q-input{width:100%;background:var(--night3);border:1px solid var(--border);border-radius:10px;padding:14px 16px;color:var(--text);font-family:'Syne',sans-serif;font-size:13px;resize:vertical;min-height:100px;outline:none;transition:border .2s;}
+textarea.q-input:focus{border-color:rgba(0,212,180,.4);}
+textarea.q-input::placeholder{color:var(--text-soft);}
+.multi-select{display:flex;flex-wrap:wrap;gap:8px;}
+.ms-opt{padding:8px 16px;background:var(--night3);border:1px solid var(--border);border-radius:8px;font-size:12px;color:var(--text-mid);cursor:pointer;transition:all .2s;font-weight:500;}
+.ms-opt:hover,.ms-opt.sel{background:var(--teal-dim);border-color:rgba(0,212,180,.35);color:var(--teal);}
+.form-footer{display:flex;justify-content:space-between;align-items:center;padding-top:24px;border-top:1px solid var(--border);margin-top:8px;}
+.progress-mini{display:flex;align-items:center;gap:10px;font-size:12px;color:var(--text-soft);}
+.prog-dots{display:flex;gap:5px;}
+.prog-dot{width:8px;height:8px;border-radius:50%;background:var(--night4);border:1px solid var(--border2);transition:background .2s;}
+.prog-dot.done{background:var(--teal);}
+.prog-dot.cur{background:var(--teal);box-shadow:0 0 8px var(--teal);}
+.submit-note{font-size:11px;color:var(--text-soft);}
+
+/* ── RESULTS DASHBOARD ── */
+.results-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px;margin-bottom:20px;}
+.results-wide{display:grid;grid-template-columns:1.5fr 1fr;gap:18px;margin-bottom:20px;}
+.rcard{background:var(--night2);border:1px solid var(--border);border-radius:14px;padding:22px;}
+.rcard-label{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text-soft);margin-bottom:8px;}
+.rcard-val{font-family:'Instrument Serif',serif;font-size:42px;color:var(--text);line-height:1;}
+.rcard-change{font-size:12px;font-weight:600;margin-top:4px;}
+.rcard-change.up{color:var(--teal);}
+.rcard-change.down{color:var(--rose);}
+.radar-container{display:flex;align-items:center;justify-content:center;padding:10px 0;}
+.competency-bar{margin-bottom:14px;}
+.comp-top{display:flex;justify-content:space-between;margin-bottom:5px;}
+.comp-name{font-size:13px;font-weight:600;color:var(--text);}
+.comp-scores{display:flex;gap:10px;}
+.comp-score{font-size:12px;font-weight:700;}
+.comp-score.self{color:var(--teal);}
+.comp-score.mgr{color:var(--gold);}
+.comp-score.peer{color:var(--blue);}
+.comp-score.rep{color:var(--rose);}
+.bar-track{height:6px;background:var(--night4);border-radius:3px;overflow:visible;position:relative;}
+.bar-multi{display:flex;height:100%;border-radius:3px;overflow:hidden;}
+.bar-seg{height:100%;transition:width 1.2s var(--ease);}
+.gap-pill{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:6px;font-size:11px;font-weight:600;margin-top:6px;}
+.gap-pill.blind-spot{background:rgba(255,107,138,.12);color:var(--rose);border:1px solid rgba(255,107,138,.2);}
+.gap-pill.hidden-gem{background:var(--teal-dim);color:var(--teal);border:1px solid rgba(0,212,180,.2);}
+.gap-pill.aligned{background:var(--night3);color:var(--text-soft);border:1px solid var(--border);}
+.comment-item{display:flex;gap:12px;padding:14px 0;border-bottom:1px solid var(--border);}
+.comment-item:last-child{border-bottom:none;}
+.comment-av{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;}
+.comment-text{font-size:13px;color:var(--text-mid);line-height:1.6;font-style:italic;}
+.comment-source{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-top:4px;}
+
+/* ── HOW IT WORKS ── */
+.steps-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border-radius:14px;overflow:hidden;margin-top:48px;}
+.step{background:var(--night2);padding:32px 24px;position:relative;}
+.step-num{font-family:'Instrument Serif',serif;font-size:64px;font-weight:400;color:var(--night4);line-height:1;margin-bottom:12px;position:absolute;top:16px;right:20px;}
+.step-icon{font-size:28px;margin-bottom:16px;}
+.step-title{font-size:16px;font-weight:700;color:var(--text);margin-bottom:8px;}
+.step-body{font-size:13px;color:var(--text-soft);line-height:1.6;font-weight:400;}
+
+/* ── COMPETENCIES ── */
+.comp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:48px;}
+.comp-card{background:var(--night2);border:1px solid var(--border);border-radius:12px;padding:22px;transition:all .25s var(--ease);cursor:default;}
+.comp-card:hover{border-color:var(--border2);transform:translateY(-3px);background:var(--night3);}
+.comp-card-icon{font-size:26px;margin-bottom:12px;}
+.comp-card-title{font-size:15px;font-weight:700;color:var(--text);margin-bottom:7px;}
+.comp-card-body{font-size:13px;color:var(--text-soft);line-height:1.6;font-weight:400;}
+
+/* ── RESULTS PAGE ── */
+#results-section{display:none;}
+.results-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:32px;}
+.subject-card{display:flex;align-items:center;gap:16px;}
+.sub-av{width:52px;height:52px;border-radius:50%;background:var(--teal-dim);border:2px solid var(--teal);display:flex;align-items:center;justify-content:center;font-family:'Instrument Serif',serif;font-size:20px;color:var(--teal);}
+.sub-name{font-family:'Instrument Serif',serif;font-size:22px;color:var(--text);}
+.sub-role{font-size:12px;color:var(--text-soft);margin-top:2px;}
+.score-legend{display:flex;gap:16px;flex-wrap:wrap;}
+.leg-item{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;}
+.leg-dot{width:10px;height:10px;border-radius:50%;}
+
+/* ── FOOTER ── */
+<footer>
+  <div class="footer-logo">People<span>IQ</span> 360°</div>
+  <div class="footer-links">
+    <a href="#">Privacy Policy</a>
+    <a href="#">How anonymity works</a>
+    <a href="#">Support</a>
+    <a href="#" onclick="showToast('Thanks for the interest!')">Enterprise Plan</a>
+  </div>
+  <div style="font-size:12px;color:var(--text-soft);">Built for every industry. Every team.</div>
+</footer>
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--night3);border:1px solid var(--border2);color:var(--text);padding:12px 20px;border-radius:10px;font-size:13px;font-weight:500;box-shadow:0 12px 40px rgba(0,0,0,.5);transform:translateY(60px);opacity:0;transition:all .3s var(--ease);z-index:9999;display:flex;align-items:center;gap:8px;}
+.toast.show{transform:translateY(0);opacity:1;}
+.toast-icon{color:var(--teal);font-size:15px;}
+
+/* ── PAGE SECTIONS ── */
+.page-section{display:none;}
+.page-section.active{display:block;}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:5px;}
+::-webkit-scrollbar-thumb{background:var(--night4);border-radius:3px;}
+</style>
+</head>
+<body>
+
+<!-- CURSOR -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursor-ring"></div>
+
+<!-- HEADER -->
+<header>
+  <div class="logo">People<span>IQ</span> <span style="font-size:14px;color:var(--text-soft);font-style:normal;font-family:'Syne',sans-serif;font-weight:400;margin-left:8px;">360°</span></div>
+  <nav class="nav">
+    <button class="nav-btn ghost" onclick="showSection('home')">Overview</button>
+    <button class="nav-btn ghost" onclick="showSection('feedback')">Give Feedback</button>
+    <button class="nav-btn ghost" onclick="showSection('results')">My Results</button>
+    <button class="nav-btn solid" onclick="showSection('feedback')">Start Review →</button>
+  </nav>
+</header>
+
+<!-- ════════ HOME ════════ -->
+<div class="page-section active" id="sec-home">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-bg">
+      <div class="orb orb1"></div>
+      <div class="orb orb2"></div>
+      <div class="orb orb3"></div>
+      <div class="grid-lines"></div>
+    </div>
+    <div class="hero-content">
+      <div class="hero-badge"><span class="pulse"></span>AI-Powered Performance Intelligence</div>
+      <h1>Growth begins with<br><em>honest reflection</em></h1>
+      <p>A structured 360° feedback system that collects insights from every direction — self, manager, peers, and direct reports — to reveal the full picture of how you lead and collaborate.</p>
+      <div class="hero-ctas">
+        <button class="btn-lg btn-teal" onclick="showSection('feedback')">Begin My Review Cycle</button>
+        <button class="btn-lg btn-ghost-lg" onclick="showSection('results')">View Sample Results →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ORBIT DIAGRAM -->
+  <div class="orbit-section" style="background:var(--night2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:80px;">
+    <div class="orbit-wrap">
+      <div class="orbit-ring r2"></div>
+      <div class="orbit-ring r1"></div>
+      <div class="orbit-center">
+        <div style="font-size:22px;margin-bottom:4px;">👤</div>
+        <div class="name">You</div>
+        <div class="sub">Subject</div>
+      </div>
+      <div class="orbit-node self" title="Self Assessment"><div class="n-icon">🪞</div><div class="n-label">Self</div></div>
+      <div class="orbit-node manager" title="Manager Review"><div class="n-icon">🎯</div><div class="n-label">Manager</div></div>
+      <div class="orbit-node peer" title="Peer Feedback"><div class="n-icon">🤝</div><div class="n-label">Peers</div></div>
+      <div class="orbit-node report" title="Direct Report Input"><div class="n-icon">📢</div><div class="n-label">Reports</div></div>
+    </div>
+    <div class="orbit-text">
+      <div class="section-label">The Model</div>
+      <h2>Four voices.<br><em>One truth.</em></h2>
+      <p>Traditional performance reviews capture only one perspective. The 360° model aggregates structured feedback from all directions — revealing blind spots, confirming strengths, and surfacing growth opportunities that single-source reviews miss entirely.</p>
+      <div class="source-pills">
+        <div class="source-pill teal"><span>🪞</span> Self Assessment</div>
+        <div class="source-pill gold"><span>🎯</span> Manager Review</div>
+        <div class="source-pill blue"><span>🤝</span> Peer Feedback</div>
+        <div class="source-pill rose"><span>📢</span> Direct Reports</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HOW IT WORKS -->
+  <section>
+    <div class="centered">
+      <div class="section-label">Process</div>
+      <div class="section-title">How it <em>works</em></div>
+      <div class="section-sub">A four-stage cycle designed to be honest, structured, and psychologically safe for every participant.</div>
+    </div>
+    <div class="steps-grid">
+      <div class="step"><div class="step-num">01</div><div class="step-icon">🗂</div><div class="step-title">Cycle Setup</div><div class="step-body">HR or the manager defines the review cycle, selects competencies, and assigns reviewers across all four feedback directions.</div></div>
+      <div class="step"><div class="step-num">02</div><div class="step-icon">📝</div><div class="step-title">Feedback Collection</div><div class="step-body">All reviewers complete structured questionnaires covering ratings, behavioural anchors, and open-ended qualitative input. Fully anonymous.</div></div>
+      <div class="step"><div class="step-num">03</div><div class="step-icon">🧠</div><div class="step-title">AI Synthesis</div><div class="step-body">The AI engine aggregates scores, detects perception gaps between self and others, and identifies blind spots and hidden strengths automatically.</div></div>
+      <div class="step"><div class="step-num">04</div><div class="step-icon">🌱</div><div class="step-title">Development Plan</div><div class="step-body">A personalised development plan is generated, with targeted recommendations tied to specific competency gaps revealed by the multi-rater data.</div></div>
+    </div>
+  </section>
+
+  <!-- COMPETENCIES -->
+  <section style="background:var(--night2);border-top:1px solid var(--border);">
+    <div class="centered">
+      <div class="section-label">What We Measure</div>
+      <div class="section-title">Core <em>competencies</em></div>
+      <div class="section-sub">Six universal dimensions that determine how effectively someone leads, collaborates, and delivers in any organisation or industry.</div>
+    </div>
+    <div class="comp-grid" style="max-width:1000px;margin:48px auto 0;">
+      <div class="comp-card"><div class="comp-card-icon">🧭</div><div class="comp-card-title">Leadership & Vision</div><div class="comp-card-body">Sets clear direction, inspires commitment, and navigates ambiguity with confidence. Measured across all four rater groups.</div></div>
+      <div class="comp-card"><div class="comp-card-icon">💬</div><div class="comp-card-title">Communication</div><div class="comp-card-body">Clarity, active listening, constructive feedback delivery, and ability to adapt communication style across audiences.</div></div>
+      <div class="comp-card"><div class="comp-card-icon">🤲</div><div class="comp-card-title">Collaboration</div><div class="comp-card-body">Contribution to team goals, peer support, conflict resolution, and cross-functional partnership effectiveness.</div></div>
+      <div class="comp-card"><div class="comp-card-icon">⚡</div><div class="comp-card-title">Execution & Delivery</div><div class="comp-card-body">Reliability, quality of output, deadline adherence, and ability to prioritise under pressure. Critical for peer and manager views.</div></div>
+      <div class="comp-card"><div class="comp-card-icon">🔄</div><div class="comp-card-title">Adaptability</div><div class="comp-card-body">Openness to change, learning agility, and resilience when strategies shift or new challenges arise unexpectedly.</div></div>
+      <div class="comp-card"><div class="comp-card-icon">🌱</div><div class="comp-card-title">Growth Mindset</div><div class="comp-card-body">Proactive learning, receptiveness to feedback, and the ability to turn developmental input into visible behavioural change.</div></div>
+    </div>
+  </section>
+
+</div>
+
+<!-- ════════ FEEDBACK FORM ════════ -->
+<div class="page-section" id="sec-feedback">
+<section class="form-section" style="padding-top:100px;">
+  <div class="form-wrap" style="max-width:820px;margin:0 auto;padding:0 20px 80px;">
+    <div style="margin-bottom:40px;">
+      <div class="section-label">Review Cycle Q4 2024</div>
+      <div class="section-title">Provide <em>feedback</em></div>
+      <div class="section-sub" style="font-size:14px;">Reviewing: <strong style="color:var(--text)">Jordan Mehta</strong> · Senior Product Manager<br>Your responses are completely anonymous and aggregated before sharing.</div>
+    </div>
+    <div class="form-tabs">
+      <div class="form-tab active" onclick="switchTab(0)">🪞 Self</div>
+      <div class="form-tab" onclick="switchTab(1)">🎯 Manager</div>
+      <div class="form-tab" onclick="switchTab(2)">🤝 Peer</div>
+      <div class="form-tab" onclick="switchTab(3)">📢 Direct Report</div>
+    </div>
+
+    <!-- SELF ASSESSMENT -->
+    <div class="form-panel active" id="panel-0">
+      <div class="reviewer-header">
+        <div class="rev-av teal">JM</div>
+        <div class="rev-info"><div class="rev-name">Jordan Mehta (You)</div><div class="rev-role">Self Assessment · Senior Product Manager</div></div>
+        <div class="anon-badge">🔒 Private</div>
+      </div>
+
+      <div class="q-block">
+        <div class="q-label">1. How effectively do you communicate your vision and priorities to the team?</div>
+        <div class="q-sub">Rate from 1 (Needs significant work) to 5 (Exceptional)</div>
+        <div class="rating-row">
+          <button class="rating-btn" onclick="selectRating(this,'r1')">1</button>
+          <button class="rating-btn" onclick="selectRating(this,'r1')">2</button>
+          <button class="rating-btn" onclick="selectRating(this,'r1')">3</button>
+          <button class="rating-btn" onclick="selectRating(this,'r1')">4</button>
+          <button class="rating-btn" onclick="selectRating(this,'r1')">5</button>
+        </div>
+        <div class="rating-labels"><span>Needs Work</span><span>Exceptional</span></div>
+      </div>
+
+      <div class="q-block">
+        <div class="q-label">2. How well do you handle feedback and use it for growth?</div>
+        <div class="q-sub">Rate your receptiveness to constructive input</div>
+        <div class="rating-row">
+          <button class="rating-btn" onclick="selectRating(this,'r2')">1</button>
+          <button class="rating-btn" onclick="selectRating(this,'r2')">2</button>
+          <button class="rating-btn" onclick="selectRating(this,'r2')">3</button>
+          <button class="rating-btn" onclick="selectRating(this,'r2')">4</button>
+          <button class="rating-btn" onclick="selectRating(this,'r2')">5</button>
+        </div>
+        <div class="rating-labels"><span>Needs Work</span><span>Exceptional</span></div>
+      </div>
+
+      <div class="q-block">
+        <div class="q-label">3. Rate your overall effectiveness this quarter</div>
+        <div class="q-sub">Drag to select your self-assessed performance score</div>
+        <div class="slider-wrap">
+          <span style="font-size:12px;color:var(--text-soft);">1</span>
+          <input type="range" class="slider" min="1" max="10" value="7" oninput="this.nextElementSibling.textContent=this.value">
+          <span class="slider-val">7</span>
+        </div>
+      </div>
+
+      <div class="q-block">
+        <div class="q-label">4. What are your top 3 strengths this quarter?</div>
+        <div class="q-sub">Select all that apply</div>
+        <div class="multi-select">
+          <div class="ms-opt" onclick="toggleOpt(this)">Strategic thinking</div>
+          <div class="ms-opt" onclick="toggleOpt(this)">Cross-team collaboration</div>
+          <div class="ms-opt sel" onclick="toggleOpt(this)">Data-driven decisions</div>
+          <div class="ms-opt" onclick="toggleOpt(this)">Stakeholder management</div>
+          <div class="ms-opt sel" onclick="toggleOpt(this)">Problem solving</div>
+          <div class="ms-opt" onclick="toggleOpt(this)">Execution speed</div>
+          <div class="ms-opt" onclick="toggleOpt(this)">Mentoring others</div>
+          <div class="ms-opt sel" onclick="toggleOpt(this)">Communication clarity</div>
+        </div>
+      </div>
+
+      <div class="q-block">
+        <div class="q-label">5. What is one area you most want to develop in the next 6 months?</div>
+        <textarea class="q-input" placeholder="Be specific — what skill, behaviour, or habit would make the biggest difference..."></textarea>
+      </div>
+
+      <div class="form-footer">
+        <div class="progress-mini">
+          <div class="prog-dots">
+            <div class="prog-dot cur" id="pd0"></div>
+            <div class="prog-dot" id="pd1"></div>
+            <div class="prog-dot" id="pd2"></div>
+            <div class="prog-dot" id="pd3"></div>
+          </div>
+          Section 1 of 4
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div class="submit-note">🔒 Auto-saved</div>
+          <button class="btn-lg btn-teal" style="padding:11px 24px;font-size:14px;" onclick="nextTab()">Next: Manager Review →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MANAGER REVIEW -->
+    <div class="form-panel" id="panel-1">
+      <div class="reviewer-header">
+        <div class="rev-av gold">DK</div>
+        <div class="rev-info"><div class="rev-name">Diana K.</div><div class="rev-role">Manager Review · Head of Product</div></div>
+        <div class="anon-badge">🔒 Anonymous</div>
+      </div>
+
+      <div class="q-block">
+        <div class="q-label">1. How consistently does this person deliver against agreed objectives?</div>
+        <div class="rating-row">
+          <button class="rating-btn" onclick="selectRating(this,'m1')">1</button>
+          <button class="rating-btn" onclick="selectRating(this,'m1')">2</button>
+          <button class="rating-btn" onclick="selectRating(this,'m1')">3</button>
+          <button class="rating-btn sel" onclick="selectRating(this,'m1')">4</button>
+          <button class="rating-btn" onclick="selectRating(this,'m1')">5</button>
+        </div>
+        <div class="rating-labels"><span>Rarely</span><span>Always</span></div>
+      </div>
+
+      <div class="q-block">
+        <div class="q-label">2. How well does this person take initiative without being directed?</div>
+        <div class="rating-row">
+          <button class="rating-btn" onclick="selectRating(this,'m2')">1</button>
+          <button class="rating-btn" onclick="selectRating(this,'m2')">2</button>
+          <button class="rating-btn" onclick="selectRating(this,'m2')">3</button>
+          <button class="rating-btn" onclick="selectRating(this,'m2')">4</button>
+          <button class="rating-btn sel" onclick="selectRating(this,'m2')">5</button>
+        </div>
+        <div class="rating-labels"><span>Needs prompting</span><span>Highly proactive</span></div>
+      </div>
+
+      <div class="q-block">
+        <div class="q-label">3. What is this person's greatest contribution to the team?</div>
+        <textarea class="q-input" placeholder="Describe specific behaviours or outcomes that stood out...">Consistently brings data-backed recommendations to roadmap discussions, which has reduced decision-making time significantly. Excellent at synthesising complex inputs into clear priorities for the team.</textarea>
+      </div>
+
+      <div class="q-block">
+        <div class="q-label">4. What is one behaviour that, if changed, would make this person significantly more effective?</div>
+        <textarea class="q-input" placeholder="Be constructive and specific...">Could improve on delegating execution tasks to junior members rather than owning everything personally — creates bottlenecks during peak delivery periods.</textarea>
+      </div>
+
+      <div class="q-block">
+        <div class="q-label">5. Rate readiness for increased responsibility</div>
+        <div class="slider-wrap">
+          <span style="font-size:12px;color:var(--text-soft);">1</span>
+          <input type="range" class="slider" min="1" max="10" value="8" oninput="this.nextElementSibling.textContent=this.value">
+          <span class="slider-val">8</span>
+        </div>
+      </div>
+
+      <div class="form-footer">
+        <div class="progress-mini">
+          <div class="prog-dots">
+            <div class="prog-dot done"></div>
+            <div class="prog-dot cur"></div>
+            <div class="prog-dot"></div>
+            <div class="prog-dot"></div>
+          </div>
+          Section 2 of 4
+        </div>
+        <div style="display:flex;gap:10px;">
+          <button class="btn-lg btn-ghost-lg" style="padding:11px 20px;font-size:14px;" onclick="switchTab(0)">← Back</button>
+          <button class="btn-lg btn-teal" style="padding:11px 24px;font-size:14px;" onclick="nextTab()">Next: Peer Feedback →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PEER FEEDBACK -->
+    <div class="form-panel" id="panel-2">
+      <div class="reviewer-header">
+        <div class="rev-av blue">AN</div>
+        <div class="rev-info"><div class="rev-name">Anonymous Peer</div><div class="rev-role">Peer Feedback · Engineering / Design / Marketing</div></div>
+        <div class="anon-badge">🔒 Anonymous</div>
+      </div>
+
+      <div class="q-block">
+        <div class="q-label">1. How easy is it to collaborate with this person across teams?</div>
+        <div class="rating-row">
+          <button class="rating-btn" onclick="selectRating(this,'p1')">1</button>
+          <button class="rating-btn" onclick="selectRating(this,'p1')">2</button>
+          <button class="rating-btn" onclick="selectRating(this,'p1')">3</button>
+          <button class="rating-btn sel" onclick="selectRating(this,'p1')">4</button>
+          <button class="rating-btn" onclick="selectRating(this,'p1')">5</button>
+        </div>
+        <div class="rating-labels"><span>Very difficult</span><span>Seamless</span></div>
+      </div>
+
+      <div class="q-block">
+        <div class="q-label">2. How well does this person communicate project updates and changes that affect your work?</div>
+        <div class="rating-row">
+          <button class="rating-btn" onclick="selectRating(this,'p2')">1</button>
+          <button class="rating-btn" onclick="selectRating(this,'p2')">2</button>
+          <button class="rating-btn" onclick="selectRating(this,'p2')">3</button>
+          <button class="rating-btn sel" onclick="selectRating(this,'p2')">4</button>
+          <button class="rating-btn" onclick="selectRating(this,'p2')">5</button>
+        </div>
+        <div class="rating-labels"><span>Rarely communicates</span><span>Always proactive</span></div>
+      </div>
+
+      <div class="q-block">
+        <div class="q-label">3. Which behaviours does this person demonstrate consistently?</div>
+        <div class="multi-select">
+          <div class="ms-opt sel" onclick="toggleOpt(this)">Listens actively</div>
+          <div class="ms-opt" onclick="toggleOpt(this)">Shares credit</div>
+          <div class="ms-opt sel" onclick="toggleOpt(this)">Follows through</div>
+          <div class="ms-opt" onclick="toggleOpt(this)">Respects boundaries</div>
+          <div class="ms-opt sel" onclick="toggleOpt(this)">Gives useful feedback</div>
+          <div class="ms-opt" onclick="toggleOpt(this)">Escalates early</div>
+          <div class="ms-opt" onclick="toggleOpt(this)">Celebrates team wins</div>
+        </div>
+      </div>
+
+      <div class="q-block">
+        <div class="q-label">4. Open feedback — anything else this person should know?</div>
+        <textarea class="q-input" placeholder="Your response is completely anonymous — be honest and constructive..."></textarea>
+      </div>
+
+      <div class="form-footer">
+        <div class="progress-mini">
+          <div class="prog-dots">
+            <div class="prog-dot done"></div>
+            <div class="prog-dot done"></div>
+            <div class="prog-dot cur"></div>
+            <div class="prog-dot"></div>
+          </div>
+          Section 3 of 4
+        </div>
+        <div style="display:flex;gap:10px;">
+          <button class="btn-lg btn-ghost-lg" style="padding:11px 20px;font-size:14px;" onclick="switchTab(1)">← Back</button>
+          <button class="btn-lg btn-teal" style="padding:11px 24px;font-size:14px;" onclick="nextTab()">Next: Direct Reports →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- DIRECT REPORT -->
+    <div class="form-panel" id="panel-3">
+      <div class="reviewer-header">
+        <div class="rev-av rose">DR</div>
+        <div class="rev-info"><div class="rev-name">Anonymous Direct Report</div><div class="rev-role">Upward Feedback · Team Members</div></div>
+        <div class="anon-badge">🔒 Anonymous</div>
+      </div>
+
+      <div class="q-block">
+        <div class="q-label">1. How well does this person create a psychologically safe environment for the team?</div>
+        <div class="rating-row">
+          <button class="rating-btn" onclick="selectRating(this,'d1')">1</button>
+          <button class="rating-btn" onclick="selectRating(this,'d1')">2</button>
+          <button class="rating-btn" onclick="selectRating(this,'d1')">3</button>
+          <button class="rating-btn" onclick="selectRating(this,'d1')">4</button>
+          <button class="rating-btn sel" onclick="selectRating(this,'d1')">5</button>
+        </div>
+        <div class="rating-labels"><span>Rarely safe</span><span>Always safe</span></div>
+      </div>
+
+      <div class="q-block">
+        <div class="q-label">2. How clearly does this person set expectations and provide direction?</div>
+        <div class="rating-row">
+          <button class="rating-btn" onclick="selectRating(this,'d2')">1</button>
+          <button class="rating-btn" onclick="selectRating(this,'d2')">2</button>
+          <button class="rating-btn" onclick="selectRating(this,'d2')">3</button>
+          <button class="rating-btn sel" onclick="selectRating(this,'d2')">4</button>
+          <button class="rating-btn" onclick="selectRating(this,'d2')">5</button>
+        </div>
+        <div class="rating-labels"><span>Very unclear</span><span>Crystal clear</span></div>
+      </div>
+
+      <div class="q-block">
+        <div class="q-label">3. How supported do you feel in your own development by this manager?</div>
+        <div class="slider-wrap">
+          <span style="font-size:12px;color:var(--text-soft);">1</span>
+          <input type="range" class="slider" min="1" max="10" value="7" oninput="this.nextElementSibling.textContent=this.value">
+          <span class="slider-val">7</span>
+        </div>
+      </div>
+
+      <div class="q-block">
+        <div class="q-label">4. What is one thing this person could do to be a more effective leader of this team?</div>
+        <textarea class="q-input" placeholder="Your feedback is anonymous. Please be specific and constructive..."></textarea>
+      </div>
+
+      <div class="form-footer">
+        <div class="progress-mini">
+          <div class="prog-dots">
+            <div class="prog-dot done"></div>
+            <div class="prog-dot done"></div>
+            <div class="prog-dot done"></div>
+            <div class="prog-dot cur"></div>
+          </div>
+          Section 4 of 4
+        </div>
+        <div style="display:flex;gap:10px;">
+          <button class="btn-lg btn-ghost-lg" style="padding:11px 20px;font-size:14px;" onclick="switchTab(2)">← Back</button>
+          <button class="btn-lg btn-teal" style="padding:11px 24px;font-size:14px;" onclick="submitFeedback()">Submit All Feedback ✓</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+</div>
+
+<!-- ════════ RESULTS ════════ -->
+<div class="page-section" id="sec-results">
+<section style="padding-top:100px;max-width:1100px;margin:0 auto;padding-left:40px;padding-right:40px;padding-bottom:80px;">
+
+  <div class="results-header">
+    <div class="subject-card">
+      <div class="sub-av">JM</div>
+      <div><div class="sub-name">Jordan Mehta</div><div class="sub-role">Senior Product Manager · Q4 2024 Review · 12 Respondents</div></div>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+      <div class="score-legend">
+        <div class="leg-item"><div class="leg-dot" style="background:var(--teal)"></div> Self</div>
+        <div class="leg-item"><div class="leg-dot" style="background:var(--gold)"></div> Manager</div>
+        <div class="leg-item"><div class="leg-dot" style="background:var(--blue)"></div> Peers</div>
+        <div class="leg-item"><div class="leg-dot" style="background:var(--rose)"></div> Reports</div>
+      </div>
+      <button class="nav-btn ghost" onclick="showToast('PDF report downloading...')">↓ Export Report</button>
+    </div>
+  </div>
+
+  <!-- KPI ROW -->
+  <div class="results-grid" style="margin-bottom:20px;">
+    <div class="rcard" style="border-color:rgba(0,212,180,.2);">
+      <div class="rcard-label">Overall Score</div>
+      <div class="rcard-val" style="color:var(--teal);">4.1<span style="font-size:20px;color:var(--text-soft)">/5</span></div>
+      <div class="rcard-change up">↑ +0.4 vs last cycle</div>
+    </div>
+    <div class="rcard">
+      <div class="rcard-label">Perception Gap</div>
+      <div class="rcard-val" style="color:var(--gold);">+0.6</div>
+      <div class="rcard-change" style="color:var(--text-soft);">Self rates higher than others</div>
+    </div>
+    <div class="rcard">
+      <div class="rcard-label">Responses Received</div>
+      <div class="rcard-val">12<span style="font-size:20px;color:var(--text-soft)">/14</span></div>
+      <div class="rcard-change" style="color:var(--text-soft);">86% response rate</div>
+    </div>
+  </div>
+
+  <!-- RADAR + COMMENTS -->
+  <div class="results-wide">
+    <!-- Competency Scores -->
+    <div class="rcard">
+      <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:20px;">Competency Breakdown</div>
+
+      <!-- Leadership -->
+      <div class="competency-bar">
+        <div class="comp-top">
+          <div class="comp-name">🧭 Leadership & Vision</div>
+          <div class="comp-scores">
+            <span class="comp-score self">S: 4.5</span>
+            <span class="comp-score mgr">M: 4.2</span>
+            <span class="comp-score peer">P: 3.8</span>
+            <span class="comp-score rep">R: 4.0</span>
+          </div>
+        </div>
+        <div class="bar-track">
+          <div class="bar-multi">
+            <div class="bar-seg" style="width:0%;background:var(--teal);opacity:.9;" id="b1a"></div>
+            <div class="bar-seg" style="width:0%;background:var(--gold);opacity:.7;" id="b1b"></div>
+            <div class="bar-seg" style="width:0%;background:var(--blue);opacity:.6;" id="b1c"></div>
+          </div>
+        </div>
+        <span class="gap-pill blind-spot">⚠ Blind Spot — Self rates 0.7 above peers</span>
+      </div>
+
+      <!-- Communication -->
+      <div class="competency-bar">
+        <div class="comp-top">
+          <div class="comp-name">💬 Communication</div>
+          <div class="comp-scores">
+            <span class="comp-score self">S: 3.8</span>
+            <span class="comp-score mgr">M: 4.5</span>
+            <span class="comp-score peer">P: 4.2</span>
+            <span class="comp-score rep">R: 4.0</span>
+          </div>
+        </div>
+        <div class="bar-track"><div class="bar-multi">
+          <div class="bar-seg" style="width:0%;background:var(--teal);opacity:.9;" id="b2a"></div>
+          <div class="bar-seg" style="width:0%;background:var(--gold);opacity:.7;" id="b2b"></div>
+          <div class="bar-seg" style="width:0%;background:var(--blue);opacity:.6;" id="b2c"></div>
+        </div></div>
+        <span class="gap-pill hidden-gem">✦ Hidden Gem — Others rate higher than self</span>
+      </div>
+
+      <!-- Collaboration -->
+      <div class="competency-bar">
+        <div class="comp-top">
+          <div class="comp-name">🤲 Collaboration</div>
+          <div class="comp-scores">
+            <span class="comp-score self">S: 4.2</span>
+            <span class="comp-score mgr">M: 4.0</span>
+            <span class="comp-score peer">P: 4.1</span>
+            <span class="comp-score rep">R: 4.3</span>
+          </div>
+        </div>
+        <div class="bar-track"><div class="bar-multi">
+          <div class="bar-seg" style="width:0%;background:var(--teal);opacity:.9;" id="b3a"></div>
+          <div class="bar-seg" style="width:0%;background:var(--gold);opacity:.7;" id="b3b"></div>
+          <div class="bar-seg" style="width:0%;background:var(--blue);opacity:.6;" id="b3c"></div>
+        </div></div>
+        <span class="gap-pill aligned">✓ Well Aligned across all rater groups</span>
+      </div>
+
+      <!-- Execution -->
+      <div class="competency-bar">
+        <div class="comp-top">
+          <div class="comp-name">⚡ Execution & Delivery</div>
+          <div class="comp-scores">
+            <span class="comp-score self">S: 4.0</span>
+            <span class="comp-score mgr">M: 4.8</span>
+            <span class="comp-score peer">P: 4.3</span>
+            <span class="comp-score rep">R: 3.9</span>
+          </div>
+        </div>
+        <div class="bar-track"><div class="bar-multi">
+          <div class="bar-seg" style="width:0%;background:var(--teal);opacity:.9;" id="b4a"></div>
+          <div class="bar-seg" style="width:0%;background:var(--gold);opacity:.7;" id="b4b"></div>
+          <div class="bar-seg" style="width:0%;background:var(--blue);opacity:.6;" id="b4c"></div>
+        </div></div>
+        <span class="gap-pill hidden-gem">✦ Hidden Gem — Manager sees significantly higher</span>
+      </div>
+
+      <!-- Growth -->
+      <div class="competency-bar">
+        <div class="comp-top">
+          <div class="comp-name">🌱 Growth Mindset</div>
+          <div class="comp-scores">
+            <span class="comp-score self">S: 4.5</span>
+            <span class="comp-score mgr">M: 3.8</span>
+            <span class="comp-score peer">P: 3.6</span>
+            <span class="comp-score rep">R: 3.5</span>
+          </div>
+        </div>
+        <div class="bar-track"><div class="bar-multi">
+          <div class="bar-seg" style="width:0%;background:var(--teal);opacity:.9;" id="b5a"></div>
+          <div class="bar-seg" style="width:0%;background:var(--gold);opacity:.7;" id="b5b"></div>
+          <div class="bar-seg" style="width:0%;background:var(--blue);opacity:.6;" id="b5c"></div>
+        </div></div>
+        <span class="gap-pill blind-spot">⚠ Blind Spot — Self rates 1.0 above all groups</span>
+      </div>
+    </div>
+
+    <!-- Radar + Comments -->
+    <div>
+      <!-- Radar Chart -->
+      <div class="rcard" style="margin-bottom:18px;">
+        <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:14px;">Score Radar</div>
+        <div class="radar-container">
+          <svg width="230" height="230" viewBox="0 0 230 230" id="radar-svg">
+            <!-- Drawn by JS -->
+          </svg>
+        </div>
+      </div>
+
+      <!-- AI Summary -->
+      <div class="rcard" style="background:var(--teal-dim);border-color:rgba(0,212,180,.2);">
+        <div style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--teal);margin-bottom:8px;">🤖 AI Development Insight</div>
+        <div style="font-size:13px;color:var(--text);line-height:1.65;font-weight:400;">Jordan shows a consistent <strong>blind spot in self-perceived growth mindset</strong> — rated significantly lower by all rater groups. This suggests Jordan may be conflating intention with visible action. The recommended focus for Q1: make learning and feedback-seeking <em>visible</em> to the team through deliberate behaviours like sharing learning summaries in standups.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Qualitative Comments -->
+  <div class="rcard">
+    <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:6px;">Qualitative Feedback Highlights</div>
+    <div style="font-size:12px;color:var(--text-soft);margin-bottom:18px;">Anonymised and aggregated from all 12 respondents</div>
+
+    <div class="comment-item">
+      <div class="comment-av" style="background:var(--gold-dim);color:var(--gold);border:1px solid rgba(245,200,66,.3);font-size:14px;">🎯</div>
+      <div>
+        <div class="comment-text">"Consistently brings data-backed recommendations to roadmap discussions. Excellent at synthesising complex inputs into clear priorities."</div>
+        <div class="comment-source" style="color:var(--gold);">Manager · Execution & Communication</div>
+      </div>
+    </div>
+    <div class="comment-item">
+      <div class="comment-av" style="background:var(--blue-dim);color:var(--blue);border:1px solid rgba(91,141,239,.3);font-size:14px;">🤝</div>
+      <div>
+        <div class="comment-text">"Always responsive and collaborative. Could communicate scope changes earlier so our teams can plan. The ideas are great but the handoffs need work."</div>
+        <div class="comment-source" style="color:var(--blue);">Peer · Collaboration & Communication</div>
+      </div>
+    </div>
+    <div class="comment-item">
+      <div class="comment-av" style="background:var(--rose-dim);color:var(--rose);border:1px solid rgba(255,107,138,.3);font-size:14px;">📢</div>
+      <div>
+        <div class="comment-text">"One of the better managers I've had at giving clear direction. Would really value more 1:1 time during high-pressure sprints to feel more supported."</div>
+        <div class="comment-source" style="color:var(--rose);">Direct Report · Leadership & Psychological Safety</div>
+      </div>
+    </div>
+    <div class="comment-item">
+      <div class="comment-av" style="background:var(--blue-dim);color:var(--blue);border:1px solid rgba(91,141,239,.3);font-size:14px;">🤝</div>
+      <div>
+        <div class="comment-text">"Sometimes takes on too much personally rather than trusting the team. Delegating more would make projects move faster and develop junior members more."</div>
+        <div class="comment-source" style="color:var(--blue);">Peer · Leadership Development Area</div>
+      </div>
+    </div>
+  </div>
+
+</section>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">People<span>IQ</span> 360°</div>
+  <div class="footer-links">
+    <a href="#">Privacy Policy</a>
+    <a href="#">How anonymity works</a>
+    <a href="#">Support</a>
+    <a href="#" onclick="showToast('Thanks for the interest!')">Enterprise Plan</a>
+  </div>
+  <div style="font-size:12px;color:var(--text-soft);">Built for every industry. Every team.</div>
+</footer>
+
+<!-- TOAST -->
+<div class="toast" id="toast"><span class="toast-icon">✓</span><span id="toast-msg">Done</span></div>
+
+<script>
+// ── CURSOR ──
+const cur = document.getElementById('cursor');
+const ring = document.getElementById('cursor-ring');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove', e => {
+  mx = e.clientX; my = e.clientY;
+  cur.style.transform = `translate(${mx-4}px,${my-4}px)`;
+});
+function animRing(){
+  rx+=(mx-rx)*.12; ry+=(my-ry)*.12;
+  ring.style.transform=`translate(${rx-16}px,${ry-16}px)`;
+  requestAnimationFrame(animRing);
+}
+animRing();
+document.querySelectorAll('button,a,.nav-btn,.ms-opt,.rating-btn,.orbit-node,.comp-card').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{ring.style.width='48px';ring.style.height='48px';ring.style.borderColor='rgba(0,212,180,.6)';});
+  el.addEventListener('mouseleave',()=>{ring.style.width='32px';ring.style.height='32px';ring.style.borderColor='rgba(0,212,180,.4)';});
+});
+
+// ── PAGE SWITCH ──
+function showSection(name) {
+  document.querySelectorAll('.page-section').forEach(s=>s.classList.remove('active'));
+  document.getElementById('sec-'+name).classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(name==='results') setTimeout(animateResults,400);
+}
+
+// ── TOAST ──
+function showToast(msg) {
+  const t=document.getElementById('toast');
+  document.getElementById('toast-msg').textContent=msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2800);
+}
+
+// ── FORM TABS ──
+let currentTab=0;
+function switchTab(i) {
+  document.querySelectorAll('.form-tab').forEach((t,idx)=>t.classList.toggle('active',idx===i));
+  document.querySelectorAll('.form-panel').forEach((p,idx)=>p.classList.toggle('active',idx===i));
+  for(let j=0;j<4;j++){
+    const pd=document.getElementById('pd'+j);
+    if(pd){ pd.classList.toggle('done',j<i); pd.classList.toggle('cur',j===i); pd.classList.remove('done'); }
+  }
+  // update dots
+  for(let j=0;j<4;j++){
+    const dot=document.getElementById('pd'+j);
+    if(!dot) continue;
+    dot.className='prog-dot';
+    if(j<i) dot.classList.add('done');
+    if(j===i) dot.classList.add('cur');
+  }
+  currentTab=i;
+  window.scrollTo({top:200,behavior:'smooth'});
+}
+function nextTab() {
+  if(currentTab<3) switchTab(currentTab+1);
+  else submitFeedback();
+}
+
+// ── RATING ──
+function selectRating(btn, group) {
+  btn.closest('.rating-row').querySelectorAll('.rating-btn').forEach(b=>b.classList.remove('sel'));
+  btn.classList.add('sel');
+}
+
+// ── MULTI SELECT ──
+function toggleOpt(el) { el.classList.toggle('sel'); }
+
+// ── SUBMIT ──
+function submitFeedback() {
+  showToast('All feedback submitted! Thank you.');
+  setTimeout(()=>{
+    showSection('results');
+    showToast('Your review has been anonymised and processed.');
+  },1200);
+}
+
+// ── RESULTS ANIMATION ──
+function animateResults() {
+  // Competency bars: [self%, mgr%, peer%] each out of 100
+  const bars = [
+    ['b1a',90,'b1b',84,'b1c',76],
+    ['b2a',76,'b2b',90,'b2c',84],
+    ['b3a',84,'b3b',80,'b3c',82],
+    ['b4a',80,'b4b',96,'b4c',86],
+    ['b5a',90,'b5b',76,'b5c',72],
+  ];
+  bars.forEach(([a,av,b,bv,c,cv])=>{
+    // split 100% total into 3 proportional sections
+    const total=av+bv+cv;
+    const s=document.getElementById(a),m=document.getElementById(b),p=document.getElementById(c);
+    if(s) s.style.width=(av/total*100)+'%';
+    if(m) m.style.width=(bv/total*100)+'%';
+    if(p) p.style.width=(cv/total*100)+'%';
+  });
+  drawRadar();
+}
+
+// ── RADAR ──
+function drawRadar() {
+  const svg=document.getElementById('radar-svg'); if(!svg) return;
+  svg.innerHTML='';
+  const cx=115,cy=115,r=90,labels=['Leadership','Communication','Collaboration','Execution','Growth','Adaptability'];
+  const datasets=[
+    {scores:[0.9,0.76,0.84,0.80,0.90,0.82],color:'var(--teal)',opacity:.18},
+    {scores:[0.84,0.90,0.80,0.96,0.76,0.80],color:'var(--gold)',opacity:.18},
+    {scores:[0.76,0.84,0.82,0.86,0.72,0.78],color:'var(--blue)',opacity:.18},
+  ];
+  const n=labels.length;
+  // Grid
+  [0.25,0.5,0.75,1].forEach(frac=>{
+    let pts=[];
+    for(let i=0;i<n;i++){const a=i/n*Math.PI*2-Math.PI/2;pts.push(`${cx+r*frac*Math.cos(a)},${cy+r*frac*Math.sin(a)}`);}
+    const pol=document.createElementNS('http://www.w3.org/2000/svg','polygon');
+    pol.setAttribute('points',pts.join(' '));pol.setAttribute('fill','none');pol.setAttribute('stroke','rgba(255,255,255,.07)');pol.setAttribute('stroke-width','1');svg.appendChild(pol);
+  });
+  // Axes
+  for(let i=0;i<n;i++){
+    const a=i/n*Math.PI*2-Math.PI/2;
+    const line=document.createElementNS('http://www.w3.org/2000/svg','line');
+    line.setAttribute('x1',cx);line.setAttribute('y1',cy);
+    line.setAttribute('x2',cx+r*Math.cos(a));line.setAttribute('y2',cy+r*Math.sin(a));
+    line.setAttribute('stroke','rgba(255,255,255,.1)');line.setAttribute('stroke-width','1');svg.appendChild(line);
+    // Label
+    const t=document.createElementNS('http://www.w3.org/2000/svg','text');
+    const lx=cx+(r+18)*Math.cos(a),ly=cy+(r+18)*Math.sin(a);
+    t.setAttribute('x',lx);t.setAttribute('y',ly+4);t.setAttribute('text-anchor','middle');
+    t.setAttribute('font-family','Syne,sans-serif');t.setAttribute('font-size','9');t.setAttribute('fill','rgba(255,255,255,.4)');t.setAttribute('font-weight','600');
+    t.textContent=labels[i];svg.appendChild(t);
+  }
+  // Datasets
+  datasets.forEach(ds=>{
+    let pts=[];
+    for(let i=0;i<n;i++){const a=i/n*Math.PI*2-Math.PI/2;pts.push(`${cx+r*ds.scores[i]*Math.cos(a)},${cy+r*ds.scores[i]*Math.sin(a)}`);}
+    const poly=document.createElementNS('http://www.w3.org/2000/svg','polygon');
+    poly.setAttribute('points',pts.join(' '));poly.setAttribute('fill',ds.color);poly.setAttribute('fill-opacity',ds.opacity);
+    poly.setAttribute('stroke',ds.color);poly.setAttribute('stroke-width','1.5');poly.setAttribute('stroke-opacity','.7');svg.appendChild(poly);
+  });
+}
+
+// ── INIT ──
+window.addEventListener('load',()=>{
+  animateResults();
+  // Observe results section
+  if(window.location.hash==='#results') showSection('results');
+});
+</script>
+</body>
+</html>
