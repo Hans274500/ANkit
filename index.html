@@ -227,16 +227,12 @@ textarea.q-input::placeholder{color:var(--text-soft);}
 .leg-dot{width:10px;height:10px;border-radius:50%;}
 
 /* ── FOOTER ── */
-<footer>
-  <div class="footer-logo">People<span>IQ</span> 360°</div>
-  <div class="footer-links">
-    <a href="#">Privacy Policy</a>
-    <a href="#">How anonymity works</a>
-    <a href="#">Support</a>
-    <a href="#" onclick="showToast('Thanks for the interest!')">Enterprise Plan</a>
-  </div>
-  <div style="font-size:12px;color:var(--text-soft);">Built for every industry. Every team.</div>
-</footer>
+footer { display: flex; align-items: center; justify-content: space-between; padding: 40px; border-top: 1px solid var(--border); margin-top: 40px; flex-wrap: wrap; gap: 20px; }
+.footer-logo { font-family: 'Instrument Serif', serif; font-size: 20px; color: var(--text); }
+.footer-logo span { color: var(--teal); font-style: italic; }
+.footer-links { display: flex; gap: 24px; }
+.footer-links a { font-size: 13px; color: var(--text-soft); text-decoration: none; transition: color 0.2s; }
+.footer-links a:hover { color: var(--teal); }
 
 /* ── TOAST ── */
 .toast{position:fixed;bottom:24px;right:24px;background:var(--night3);border:1px solid var(--border2);color:var(--text);padding:12px 20px;border-radius:10px;font-size:13px;font-weight:500;box-shadow:0 12px 40px rgba(0,0,0,.5);transform:translateY(60px);opacity:0;transition:all .3s var(--ease);z-index:9999;display:flex;align-items:center;gap:8px;}
